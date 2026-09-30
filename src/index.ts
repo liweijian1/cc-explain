@@ -32,7 +32,8 @@ async function chatOnce(
             tools: toolDefinitions,
         });
         const text = response.content.find((item) => item.type === "text")?.text ?? "";
-        console.log(text);
+        console.log("text", response.usage);
+        console.log("response", text);
         // 将 AI 回复添加到消息列表中
         messages.push({ role: "assistant", content: response.content });
         const toolUses = response.content.filter(
