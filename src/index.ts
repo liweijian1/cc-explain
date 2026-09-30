@@ -30,6 +30,9 @@ async function chatOnce(
             max_tokens: modelConfig.maxTokens,
             messages,
             tools: toolDefinitions,
+            cache_control: {
+                type: "ephemeral",
+            },
         });
         const text = response.content.find((item) => item.type === "text")?.text ?? "";
         console.log("text", response.usage);
