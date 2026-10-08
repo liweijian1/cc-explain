@@ -19,7 +19,7 @@ export const toolDefinitions: Anthropic.Tool[] = [
     },
     {
         name: "get_weather",
-        description: "查询指定城市的当前天气，包括气温、体感温度、湿度、风速和天气状况。",
+        description: "查询指定城市的当前天气，包括气温、体感温度、湿度、风速和天气状况，不包含查询地理位置。",
         input_schema: {
             type: "object",
             properties: {
@@ -31,6 +31,20 @@ export const toolDefinitions: Anthropic.Tool[] = [
             required: ["city"],
         },
     },
+    {
+        name: "get_current_time",
+        description: "获取当前时间，包括年、月、日、时、分、秒。",
+        input_schema: {
+            type: "object",
+            properties: {
+                city: {
+                    type: "string",
+                    description: "城市名称，例如：北京、Shanghai、Tokyo",
+                }
+            },
+            required: ["city"],
+        }
+    }
 ];
 
 export async function readFileTool(filePath: string): Promise<string> {
@@ -130,6 +144,12 @@ export async function getWeatherTool(city: string): Promise<string> {
         `湿度: ${current.relative_humidity_2m}%`,
         `风速: ${current.wind_speed_10m} km/h`,
     ].join("\n");
+}
+
+// 获取当前时间
+export async function getCurrentTimeTool(city: string): Promise<string> {
+    const currentTime = new Date().toISOString();
+    return `当前时间: ${currentTime}`;
 }
 
 export async function executeTool(name: string, input: unknown): Promise<string> {

@@ -35,7 +35,7 @@ async function chatOnce(
             },
         });
         const text = response.content.find((item) => item.type === "text")?.text ?? "";
-        console.log("text", response.usage);
+        console.log("text", response);
         console.log("response", text);
         // 将 AI 回复添加到消息列表中
         messages.push({ role: "assistant", content: response.content });
@@ -89,6 +89,8 @@ async function startChat(): Promise<void> {
                 break;
             }
             console.log("messages", messages);
+            // 输出消息内容，同时解析[object object]为json
+            console.log("messageContent", messages.map(item => JSON.stringify(item.content)))
             // 输出 AI 回复
             process.stdout.write("AI: ");
             // 始终传入同一个 messages，chatOnce 会把本轮问答追加进去
@@ -96,7 +98,7 @@ async function startChat(): Promise<void> {
         }
     } finally {
         // 无论正常退出还是中途报错，都关掉 readline，避免进程挂住
-        rl.close();
+        rl.close()
     }
 }
 
