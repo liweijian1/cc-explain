@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx --env-file=.env src/index.ts",
+    "web": "tsx --env-file=.env src/server.ts",
     "typecheck": "tsc --noEmit",
     "build": "tsc --build --clean && tsc",
     "start": "node --env-file=.env dist/index.js"

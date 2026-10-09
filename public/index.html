@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>问询台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,650&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1c1915;
+            --ink-soft: #5c5348;
+            --paper: #efe4d2;
+            --card: #f7f0e4;
+            --line: #d8c7ae;
+            --ember: #c2410c;
+            --ember-deep: #8f2d08;
+            --moss: #2f4634;
+            --night: #141210;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { height: 100%; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 80% -20%, rgba(194, 65, 12, 0.18), transparent 36%),
+                linear-gradient(180deg, #f6efe3 0%, var(--paper) 55%, #e7d8c2 100%);
+            font-family: "Newsreader", "Noto Serif SC", serif;
+        }
+
+        .app {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 8px 12px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: "Noto Serif SC", serif;
+            font-size: 28px;
+            letter-spacing: 0.12em;
+        }
+
+        header p {
+            margin: 0;
+            color: var(--ink-soft);
+            font-size: 15px;
+        }
+
+        .reset {
+            border: 1px solid var(--ink);
+            background: transparent;
+            color: var(--ink);
+            padding: 8px 12px;
+            font: 500 13px "IBM Plex Mono", monospace;
+            cursor: pointer;
+        }
+
+        .reset:hover { background: var(--night); color: #f6efe3; }
+
+        .thread {
+            flex: 1;
+            overflow: auto;
+            padding: 8px 8px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .welcome {
+            margin: auto 0;
+            padding: 12px 4px 28px;
+        }
+
+        .welcome h2 {
+            margin: 0 0 8px;
+            font-family: "Noto Serif SC", serif;
+            font-size: 34px;
+            font-weight: 700;
+        }
+
+        .welcome p {
+            margin: 0 0 18px;
+            color: var(--ink-soft);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestions button {
+            border: 1px solid var(--line);
+            background: rgba(247, 240, 228, 0.8);
+            color: var(--ink);
+            padding: 10px 12px;
+            font: 500 15px "Noto Serif SC", serif;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .suggestions button:hover { border-color: var(--ember); color: var(--ember-deep); }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 100%;
+        }
+
+        .row.user { align-items: flex-end; }
+        .row.assistant { align-items: flex-start; }
+
+        .who {
+            color: var(--ink-soft);
+            font: 500 12px "IBM Plex Mono", monospace;
+        }
+
+        .bubble {
+            max-width: min(68ch, 100%);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-size: 18px;
+        }
+
+        .row.user .bubble {
+            background: var(--moss);
+            color: #f4f7f2;
+            padding: 12px 14px;
+        }
+
+        .row.assistant .bubble {
+            padding: 2px 0;
+        }
+
+        .trace {
+            max-width: min(68ch, 100%);
+            border-left: 2px solid var(--ember);
+            padding: 4px 0 4px 12px;
+            color: var(--ink-soft);
+            white-space: pre-wrap;
+            font: 400 13px/1.5 "IBM Plex Mono", monospace;
+        }
+
+        .trace b { color: var(--ember-deep); font-weight: 500; }
+
+        .pending {
+            color: var(--ink-soft);
+            font-style: italic;
+        }
+
+        .composer {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            padding: 8px 8px 18px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 56px;
+            max-height: 160px;
+            border: 1px solid var(--ink);
+            background: #fffaf3;
+            color: var(--ink);
+            padding: 12px 14px;
+            resize: none;
+            font: 400 17px "Newsreader", "Noto Serif SC", serif;
+        }
+
+        textarea:focus { outline: 2px solid rgba(194, 65, 12, 0.35); outline-offset: 1px; }
+
+        button.send {
+            align-self: end;
+            height: 56px;
+            border: none;
+            background: var(--ember);
+            color: #fff8f3;
+            padding: 0 18px;
+            font: 500 14px "IBM Plex Mono", monospace;
+            cursor: pointer;
+        }
+
+        button.send:hover { background: var(--ember-deep); }
+        button:disabled { cursor: wait; opacity: 0.65; }
+
+        @media (max-width: 720px) {
+            .app { max-width: none; }
+            header, .thread, .composer { padding-left: 14px; padding-right: 14px; }
+            .welcome h2 { font-size: 28px; }
+            .bubble { font-size: 17px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header>
+            <div class="brand">
+                <h1>问询台</h1>
+                <p>聊天</p>
+            </div>
+            <button class="reset" type="button" id="reset">新对话</button>
+        </header>
+
+        <main class="thread" id="thread" aria-live="polite">
+            <section class="welcome" id="welcome">
+                <h2>直接说你想问的。</h2>
+                <p>天气、当地时间、读取或创建文件，都在这条对话里完成。</p>
+                <div class="suggestions">
+                    <button type="button" data-prompt="北京现在几点？">北京现在几点？</button>
+                    <button type="button" data-prompt="上海今天天气怎么样，适合出门吗？">上海今天天气怎么样？</button>
+                    <button type="button" data-prompt="读取 README.md，用两三句话概括。">概括 README</button>
+                </div>
+            </section>
+        </main>
+
+        <form class="composer" id="composer">
+            <textarea id="message" rows="1" placeholder="输入消息，Enter 发送" required></textarea>
+            <button class="send" type="submit">发送</button>
+        </form>
+    </div>
+
+    <script type="module">
+        const threadEl = document.querySelector("#thread");
+        const composerEl = document.querySelector("#composer");
+        const messageEl = document.querySelector("#message");
+        const sessionId = localStorage.getItem("inquiry-session") || crypto.randomUUID();
+        localStorage.setItem("inquiry-session", sessionId);
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;");
+        }
+
+        function hideWelcome() {
+            document.querySelector("#welcome")?.remove();
+        }
+
+        function scrollToEnd() {
+            threadEl.scrollTop = threadEl.scrollHeight;
+        }
+
+        function addUser(text) {
+            hideWelcome();
+            const row = document.createElement("article");
+            row.className = "row user";
+            row.innerHTML = `<span class="who">你</span><div class="bubble"></div>`;
+            row.querySelector(".bubble").textContent = text;
+            threadEl.append(row);
+            scrollToEnd();
+        }
+
+        function addPending() {
+            const row = document.createElement("article");
+            row.className = "row assistant";
+            row.id = "pending";
+            row.innerHTML = `<span class="who">AI</span><div class="bubble pending">正在回复…</div>`;
+            threadEl.append(row);
+            scrollToEnd();
+        }
+
+        function removePending() {
+            document.querySelector("#pending")?.remove();
+        }
+
+        function renderEvents(events) {
+            removePending();
+            hideWelcome();
+            const row = document.createElement("article");
+            row.className = "row assistant";
+            row.innerHTML = `<span class="who">AI</span>`;
+            threadEl.append(row);
+            for (const event of events) {
+                if (event.type === "text") {
+                    const bubble = document.createElement("div");
+                    bubble.className = "bubble";
+                    bubble.textContent = event.text;
+                    row.append(bubble);
+                } else if (event.type === "tool_call") {
+                    const trace = document.createElement("div");
+                    trace.className = "trace";
+                    trace.innerHTML = `<b>调用 ${escapeHtml(event.name)}</b>\n${escapeHtml(JSON.stringify(event.input))}`;
+                    row.append(trace);
+                } else if (event.type === "tool_result") {
+                    const trace = document.createElement("div");
+                    trace.className = "trace";
+                    trace.innerHTML = `<b>${escapeHtml(event.name)}</b>\n${escapeHtml(event.result)}`;
+                    row.append(trace);
+                } else if (event.type === "tool_error" || event.type === "notice") {
+                    const trace = document.createElement("div");
+                    trace.className = "trace";
+                    trace.textContent = event.message;
+                    row.append(trace);
+                }
+            }
+            scrollToEnd();
+        }
+
+        async function sendMessage(message) {
+            const text = message.trim();
+            if (!text || messageEl.disabled) return;
+            const button = composerEl.querySelector("button");
+            addUser(text);
+            messageEl.value = "";
+            messageEl.disabled = true;
+            button.disabled = true;
+            addPending();
+            try {
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ sessionId, message: text }),
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || "对话失败");
+                renderEvents(data.events);
+            } catch (error) {
+                renderEvents([{ type: "notice", message: error.message }]);
+            } finally {
+                messageEl.disabled = false;
+                button.disabled = false;
+                messageEl.focus();
+            }
+        }
+
+        composerEl.addEventListener("submit", (event) => {
+            event.preventDefault();
+            sendMessage(messageEl.value);
+        });
+
+        messageEl.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                composerEl.requestSubmit();
+            }
+        });
+
+        threadEl.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-prompt]");
+            if (!button) return;
+            sendMessage(button.dataset.prompt);
+        });
+
+        document.querySelector("#reset").addEventListener("click", async () => {
+            await fetch("/api/session/reset", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sessionId }),
+            });
+            threadEl.innerHTML = `
+                <section class="welcome" id="welcome">
+                    <h2>新的一段对话。</h2>
+                    <p>天气、当地时间、读取或创建文件，都在这条对话里完成。</p>
+                    <div class="suggestions">
+                        <button type="button" data-prompt="北京现在几点？">北京现在几点？</button>
+                        <button type="button" data-prompt="上海今天天气怎么样，适合出门吗？">上海今天天气怎么样？</button>
+                        <button type="button" data-prompt="读取 README.md，用两三句话概括。">概括 README</button>
+                    </div>
+                </section>
+            `;
+            messageEl.focus();
+        });
+    </script>
+</body>
+</html>
