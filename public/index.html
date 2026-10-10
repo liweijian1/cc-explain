@@ -229,11 +229,11 @@
         <main class="thread" id="thread" aria-live="polite">
             <section class="welcome" id="welcome">
                 <h2>直接说你想问的。</h2>
-                <p>天气、当地时间、读取或创建文件，都在这条对话里完成。</p>
+                <p>天气、当地时间、读取文件，或打开一个网页，都在这条对话里完成。</p>
                 <div class="suggestions">
                     <button type="button" data-prompt="北京现在几点？">北京现在几点？</button>
                     <button type="button" data-prompt="上海今天天气怎么样，适合出门吗？">上海今天天气怎么样？</button>
-                    <button type="button" data-prompt="读取 README.md，用两三句话概括。">概括 README</button>
+                    <button type="button" data-prompt="打开 https://example.com ，告诉我页面在说什么。">打开 example.com</button>
                 </div>
             </section>
         </main>
@@ -332,7 +332,7 @@
             button.disabled = true;
             addPending();
             try {
-                const response = await fetch("/api/chat", {
+                const response = await fetch("api/chat", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ sessionId, message: text }),
@@ -368,7 +368,7 @@
         });
 
         document.querySelector("#reset").addEventListener("click", async () => {
-            await fetch("/api/session/reset", {
+            await fetch("api/session/reset", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ sessionId }),
@@ -376,11 +376,11 @@
             threadEl.innerHTML = `
                 <section class="welcome" id="welcome">
                     <h2>新的一段对话。</h2>
-                    <p>天气、当地时间、读取或创建文件，都在这条对话里完成。</p>
+                    <p>天气、当地时间、读取文件，或打开一个网页，都在这条对话里完成。</p>
                     <div class="suggestions">
                         <button type="button" data-prompt="北京现在几点？">北京现在几点？</button>
                         <button type="button" data-prompt="上海今天天气怎么样，适合出门吗？">上海今天天气怎么样？</button>
-                        <button type="button" data-prompt="读取 README.md，用两三句话概括。">概括 README</button>
+                        <button type="button" data-prompt="打开 https://example.com ，告诉我页面在说什么。">打开 example.com</button>
                     </div>
                 </section>
             `;

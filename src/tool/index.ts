@@ -2,12 +2,14 @@ import type Anthropic from "@anthropic-ai/sdk";
 import { getCurrentTimeTool, getCurrentTimeToolDefinition } from "./get-current-time.js";
 import { getWeatherTool, getWeatherToolDefinition } from "./get-weather.js";
 import { readFileTool, readFileToolDefinition, createFileTool, createFileToolDefinition } from "./read-file.js";
+import { webFetchTool, webFetchToolDefinition } from "./web-fetch.js";
 
 export const toolDefinitions: Anthropic.Tool[] = [
     readFileToolDefinition,
     createFileToolDefinition,
     getWeatherToolDefinition,
     getCurrentTimeToolDefinition,
+    webFetchToolDefinition,
 ];
 
 export async function executeTool(name: string, input: unknown): Promise<string> {
@@ -44,9 +46,16 @@ export async function executeTool(name: string, input: unknown): Promise<string>
             }
             return await getCurrentTimeTool(city);
         }
+        case "web_fetch": {
+            const url = (input as { url?: string }).url;
+            if (!url) {
+                throw new Error("缺少 url 参数");
+            }
+            return await webFetchTool(url);
+        }
         default:
             throw new Error(`未知工具: ${name}`);
     }
 }
 
-export { getCurrentTimeTool, getWeatherTool, readFileTool, createFileTool };
+export { getCurrentTimeTool, getWeatherTool, readFileTool, createFileTool, webFetchTool };

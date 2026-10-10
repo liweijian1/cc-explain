@@ -1,0 +1,23 @@
+[Unit]
+Description=cc-explain private web app
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=cc-explain
+Group=cc-explain
+WorkingDirectory=/var/lib/cc-explain
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node-20 --env-file=/etc/cc-explain/env /opt/cc-explain/current/dist/server.js
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/cc-explain
+
+[Install]
+WantedBy=multi-user.target
